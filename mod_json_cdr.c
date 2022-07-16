@@ -26,13 +26,15 @@
  * Brian West <brian@freeswitch.org>
  * Bret McDanel <trixter AT 0xdecafbad.com>
  * Justin Cassidy <xachenant@hotmail.com>
+ * Kevin Nguyen <kevin.nguyen.ai@gmail.com>
  *
- * mod_json_cdr.c -- JSON CDR Module to files or curl
+ * mod_json_cdr.c -- JSON CDR Module to files or curl or kafka
  *
  */
 #include <switch.h>
 #include <sys/stat.h>
 #include <switch_curl.h>
+#include <mod_json_cdr.h>
 
 #define MAX_URLS 20
 #define MAX_ERR_DIRS 20
@@ -40,54 +42,6 @@
 #define ENCODING_NONE 0
 #define ENCODING_DEFAULT 1
 #define ENCODING_BASE64 2
-
-static struct {
-	char *cred;
-	char *urls[MAX_URLS];
-	int url_count;
-	int url_index;
-	switch_thread_rwlock_t *log_path_lock;
-	char *base_log_dir;
-	char *base_err_log_dir[MAX_ERR_DIRS];
-	char *log_dir;
-	char *err_log_dir[MAX_ERR_DIRS];
-	int err_dir_count;
-	uint32_t delay;
-	uint32_t retries;
-	uint32_t shutdown;
-	uint32_t enable_cacert_check;
-	char *ssl_cert_file;
-	char *ssl_key_file;
-	char *ssl_key_password;
-	char *ssl_version;
-	char *ssl_cacert_file;
-	uint32_t enable_ssl_verifyhost;
-	int encode;
-	int log_http_and_disk;
-	switch_bool_t log_errors_to_disk;
-	int log_b;
-	int prefix_a;
-	int disable100continue;
-	int rotate;
-	long auth_scheme;
-	switch_memory_pool_t *pool;
-	switch_event_node_t *node;
-	int encode_values;
-	switch_queue_t *queue;
-	switch_thread_t *thread;
-} globals;
-
-typedef struct {
-	char *json_text;
-	char *json_text_escaped;
-	char *logdir;
-	char *uuid;
-	char *filename;
-} cdr_data_t;
-
-SWITCH_MODULE_LOAD_FUNCTION(mod_json_cdr_load);
-SWITCH_MODULE_SHUTDOWN_FUNCTION(mod_json_cdr_shutdown);
-SWITCH_MODULE_DEFINITION(mod_json_cdr, mod_json_cdr_load, mod_json_cdr_shutdown, NULL);
 
 /* this function would have access to the HTML returned by the webserver, we don't need it
  * and the default curl activity is to print to stdout, something not as desirable
@@ -621,7 +575,22 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_json_cdr_load)
 				} else {
 					globals.encode = switch_true(val) ? ENCODING_DEFAULT : ENCODING_NONE;
 				}
-			} else if (!strcasecmp(var, "retries") && !zstr(val)) {
+			}
+			// kafka input
+			else if (!strcasecmp(var, "bootstrap-servers") && !zstr(val)) {
+				globals.bootstrap_servers = (char) val;
+			}
+			else if (!strcasecmp(var, "topic-prefix") && !zstr(val)) {
+				globals.topic_prefix = (char) val;
+			}
+			else if (!strcasecmp(var, "topic-dyn") && !zstr(val)) {
+				globals.topic_dyn = switch_true(val);
+			}
+			else if (!strcasecmp(var, "buffer-size") && !zstr(val)) {
+				globals.buffer_size = (uint32_t) atoi(val);
+			} 
+			// end kafka input
+			else if (!strcasecmp(var, "retries") && !zstr(val)) {
 				globals.retries = (uint32_t) atoi(val);
 			} else if (!strcasecmp(var, "rotate") && !zstr(val)) {
 				globals.rotate = switch_true(val);

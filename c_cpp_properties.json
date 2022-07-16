@@ -1,0 +1,55 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceRoot}/**",
+                "/usr/local/lib/**",
+                "/usr/local/include/**",
+                "/Library/Developer/CommandLineTools/usr/lib/clang/12.0.0/include/**",
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/include/**",
+                "/Library/Developer/CommandLineTools/usr/include/**",
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/**"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-gcc-x64",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "/usr/local/include/",
+                    "${workspaceRoot}",
+                    "/Library/Developer/CommandLineTools/usr/lib/clang/12.0.0/include/",
+                    "/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/include/",
+                    "/Library/Developer/CommandLineTools/usr/include/",
+                    "/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+              }
+        },
+        {
+            "name": "mac_c_plusplus",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-gcc-x64"
+        }
+    ],
+    "version": 4
+}
