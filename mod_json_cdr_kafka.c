@@ -34,14 +34,7 @@
 #include <switch.h>
 #include <sys/stat.h>
 #include <switch_curl.h>
-#include <mod_json_cdr.h>
-
-#define MAX_URLS 20
-#define MAX_ERR_DIRS 20
-
-#define ENCODING_NONE 0
-#define ENCODING_DEFAULT 1
-#define ENCODING_BASE64 2
+#include "mod_json_cdr_kafka.h"
 
 /* this function would have access to the HTML returned by the webserver, we don't need it
  * and the default curl activity is to print to stdout, something not as desirable
@@ -522,7 +515,7 @@ static switch_state_handler_table_t state_handlers = {
 
 SWITCH_MODULE_LOAD_FUNCTION(mod_json_cdr_load)
 {
-	char *cf = "json_cdr.conf";
+	char *cf = "json_cdr_kafka.conf";
 	switch_xml_t cfg, xml, settings, param;
 	switch_status_t status = SWITCH_STATUS_SUCCESS;
 
@@ -578,10 +571,10 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_json_cdr_load)
 			}
 			// kafka input
 			else if (!strcasecmp(var, "bootstrap-servers") && !zstr(val)) {
-				globals.bootstrap_servers = (char) val;
+				globals.bootstrap_servers = val;
 			}
 			else if (!strcasecmp(var, "topic-prefix") && !zstr(val)) {
-				globals.topic_prefix = (char) val;
+				globals.topic_prefix = val;
 			}
 			else if (!strcasecmp(var, "topic-dyn") && !zstr(val)) {
 				globals.topic_dyn = switch_true(val);
